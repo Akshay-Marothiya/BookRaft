@@ -38,6 +38,3 @@ npm run dev --prefix client
 ```
 
 Configure your environment variables in `server/.env` before starting the backend.
-
-## Author
-Your Name

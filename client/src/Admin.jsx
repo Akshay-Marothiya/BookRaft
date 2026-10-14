@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Admin.css";
-
+import { API_BASE } from "./api";
 const emptyForm = {
     title: "",
     author: "",
@@ -34,12 +34,14 @@ function Admin() {
     }
 
     const request = useCallback(async (url, options = {}) => {
-        const response = await fetch(`http://localhost:5000${url}`, {
+        
+        const response = await fetch(`${API_BASE}${url}`,   {
             ...options,
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
                 ...options.headers
+                
             }
         });
 

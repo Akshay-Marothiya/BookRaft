@@ -1,26 +1,27 @@
-const orderRoutes = require("./routes/orderRoutes");
+
 require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const path = require("path");
 
 const Book = require("./models/Book");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
 
-// Middleware must be configured before routes.
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Authentication routes
+// API routes
 app.use("/api/auth", authRoutes);
-
-// Admin routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/orders", orderRoutes);
+
 // Get books with search and filters
 app.get("/api/books", async (req, res) => {
     try {
@@ -61,16 +62,41 @@ app.get("/api/books", async (req, res) => {
     }
 });
 
-// Start server only after MongoDB connects.
+// Serve the React frontend in production
+if (process.env.NODE_ENV === "production") {
+    const clientPath = path.join(__dirname, "../client/dist");
+
+    app.use(express.static(clientPath));
+
+    // React Router fallback for frontend pages
+    app.get(/.*/, (req, res, next) => {
+        if (req.path.startsWith("/api/")) {
+            return next();
+        }
+
+        res.sendFile(
+            path.join(clientPath, "index.html"),
+            (error) => {
+                if (error) next(error);
+            }
+        );
+    });
+}
+
+// Start the server only after MongoDB connects
 async function startServer() {
     try {
+        if (!process.env.MONGO_URI) {
+            throw new Error("MONGO_URI environment variable is missing.");
+        }
+
         await mongoose.connect(process.env.MONGO_URI);
         console.log("MongoDB connected successfully");
 
-        app.listen(process.env.PORT || 5000, () => {
-            console.log(
-                `Server running on port ${process.env.PORT || 5000}`
-            );
+        const PORT = process.env.PORT || 5000;
+
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`Server running on port ${PORT}`);
         });
     } catch (error) {
         console.error("Server startup failed:", error.message);

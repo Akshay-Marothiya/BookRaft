@@ -4,7 +4,7 @@ import { useCart } from "./CartContext";
 import Navbar from "./Navbar";
 import HeroCarousel from "./HeroCarousel";
 import "./App.css";
-
+import { API_BASE } from "./api";
 function Store() {
     const [books, setBooks] = useState([]);
     const [search, setSearch] = useState("");
@@ -41,9 +41,9 @@ function Store() {
                 }
 
                 const response = await fetch(
-                    `http://localhost:5000/api/books?${params.toString()}`,
-                    { signal: controller.signal }
-                );
+    `${API_BASE}/api/books?${params.toString()}`,
+    { signal: controller.signal }
+);
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch books.");

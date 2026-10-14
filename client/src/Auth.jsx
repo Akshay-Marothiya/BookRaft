@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
-
+import { API_BASE } from "./api";
 function Auth() {
     const navigate = useNavigate();
 
@@ -31,8 +31,7 @@ function Auth() {
                     ? { username, password }
                     : { email, password };
 
-            const response = await fetch(
-                `http://localhost:5000${endpoint}`,
+            const response = await fetch(`${API_BASE}/api/auth/login`,
                 {
                     method: "POST",
                     headers: {

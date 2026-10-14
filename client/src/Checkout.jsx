@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "./CartContext";
-
+import { API_BASE } from "./api";
 function Checkout() {
     const { cart, total, clearCart } = useCart();
     const navigate = useNavigate();
@@ -29,8 +29,7 @@ function Checkout() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "http://localhost:5000/api/orders",
+            const response = await fetch(`${API_BASE}/api/auth/login`,
                 {
                     method: "POST",
                     headers: {
